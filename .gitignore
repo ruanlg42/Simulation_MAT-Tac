@@ -150,4 +150,4 @@ cython_debug/
 .idea/
 
 # Simulation generated images
-*.png
+# *.png

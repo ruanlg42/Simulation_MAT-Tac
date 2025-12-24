@@ -25,7 +25,9 @@
 
 对于空间中任意一点 $P$，其接收到的光强 $E$ 由以下公式决定：
 
-$$ E(P) = \sum_{i=1}^{N} \frac{I_0 \cdot \cos^m(\theta_i)}{d_i^2} \cdot \cos(\alpha_i) $$
+$$
+E(P) = \sum_{i=1}^{N} \frac{I_0 \cdot \cos^m(\theta_i)}{d_i^2} \cdot \cos(\alpha_i)
+$$
 
 *   **$d_i$ (距离衰减)**：遵循平方反比定律 ($1/d^2$)，是造成光照不均的主要因素。
 *   **$\cos^m(\theta_i)$ (光源方向性)**：LED 不是各向同性光源。$m$ 值由半功率角 (FOV) 决定：$m = \frac{-\ln 2}{\ln(\cos(\text{FOV}/2))}$。FOV 越小，光束越集中，$m$ 越大。
@@ -34,7 +36,9 @@ $$ E(P) = \sum_{i=1}^{N} \frac{I_0 \cdot \cos^m(\theta_i)}{d_i^2} \cdot \cos(\al
 ### 2.2 图像成像模型
 相机采集到的图像 $I(x,y)$ 可视为**光照分量**、**反射率分量**与**随机噪声**的综合作用：
 
-$$ I(x,y) = \text{clip}(L(x,y) \cdot R(x,y) + N(x,y), 0, 255) $$
+$$
+I(x,y) = \text{clip}(L(x,y) \cdot R(x,y) + N(x,y), 0, 255)
+$$
 
 *   **$L(x,y)$ - 光照分量 (Illumination)**：主要由光源分布决定，变化平缓，属于**低频信息**。
 *   **$R(x,y)$ - 反射率分量 (Reflectance)**：由表面材质（背景/标记点）决定，变化剧烈，属于**高频信息**。
@@ -45,10 +49,15 @@ $$ I(x,y) = \text{clip}(L(x,y) \cdot R(x,y) + N(x,y), 0, 255) $$
 
 假设图像灰度级为 $L$，对于任意阈值 $t$，前景和背景的像素占比分别为 $\omega_0(t), \omega_1(t)$，平均灰度分别为 $\mu_0(t), \mu_1(t)$，则类间方差定义为：
 
-$$ \sigma_B^2(t) = \omega_0(t) \omega_1(t) [\mu_0(t) - \mu_1(t)]^2 $$
+$$
+\sigma_B^2(t) = \omega_0(t) \omega_1(t) [\mu_0(t) - \mu_1(t)]^2
+$$
 
 Otsu 算法通过遍历所有可能的 $t$ 值来最大化 $\sigma_B^2(t)$：
-$$ T^* = \underset{0 \le t < L}{\operatorname{arg\,max}} \ \sigma_B^2(t) $$
+
+$$
+T^* = \mathop{\arg\max}_{0 \le t < L} \sigma_B^2(t)
+$$
 
 **局限性**：Otsu 算法假设整张图像具有统一的光照背景。在视触觉传感器中，由于光照不均，中心亮区的背景灰度可能高于边缘暗区的背景灰度，导致无法找到一个单一的 $T$ 值能同时正确分割所有区域。
 
@@ -56,9 +65,16 @@ $$ T^* = \underset{0 \le t < L}{\operatorname{arg\,max}} \ \sigma_B^2(t) $$
 为了提取标记点（即 $R(x,y)$ 中的突变），我们需要消除 $L(x,y)$ 的影响。自适应阈值算法本质上是一种**背景估计与差分**方法：
 
 1.  **背景估计**：利用低通滤波器（高斯模糊）从原图中提取出光照分量 $\hat{L}(x,y)$。
-    $$ \hat{L}(x,y) = G_\sigma(x,y) * I(x,y) $$
+
+$$
+\hat{L}(x,y) = G_\sigma(x,y) * I(x,y)
+$$
+
 2.  **局部二值化**：将原图与估计背景进行比较。
-    $$ B(x,y) = \begin{cases} 255 & \text{if } I(x,y) < \hat{L}(x,y) - C \\ 0 & \text{otherwise} \end{cases} $$
+
+$$
+B(x,y) = \begin{cases} 255 & \text{if } I(x,y) < \hat{L}(x,y) - C \\ 0 & \text{otherwise} \end{cases}
+$$
 
 其中 $C$ 是为了抵抗噪声而引入的**对比度容限**。只有当某点的亮度显著低于其局部背景时，才被判定为标记点。
 

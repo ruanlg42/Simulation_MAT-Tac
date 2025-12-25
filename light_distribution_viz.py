@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
+import os
 
 def simulate_light_distribution():
     """
@@ -95,8 +96,12 @@ def simulate_light_distribution():
     plt.legend(loc='upper right')
     
     plt.tight_layout()
-    plt.savefig('light_distribution_2d_only.png', dpi=300)
-    print("Combined visualization saved to light_distribution_2d_only.png")
+    output_dir = 'results'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    save_path = os.path.join(output_dir, 'light_distribution_2d_only.png')
+    plt.savefig(save_path, dpi=300)
+    print(f"Combined visualization saved to {save_path}")
     plt.show()
 
 if __name__ == "__main__":

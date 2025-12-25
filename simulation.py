@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import cv2
 
+import os
+
 # 设置全局字体为 Arial
 plt.rcParams['font.family'] = 'Arial'
 
@@ -25,6 +27,11 @@ class TactileSensorSim:
         # --- 图像仿真参数 ---
         self.resolution = 0.02        # 仿真网格分辨率 (mm/pixel)
         self.noise_sigma = 2.0        # 图像随机噪声标准差 (模拟传感器噪声)
+        self.output_dir = 'results'   # 输出目录
+        
+        # 确保输出目录存在
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
         
         # --- 自适应阈值参数 ---
         self.block_size = 251         # 邻域大小
@@ -272,8 +279,9 @@ class TactileSensorSim:
 
         plt.tight_layout()
         if save_img:
-            plt.savefig('simulation_result_2d.png')
-            print("Result saved to simulation_result_2d.png")
+            save_path = os.path.join(self.output_dir, 'simulation_result_2d.png')
+            plt.savefig(save_path)
+            print(f"Result saved to {save_path}")
 
         # --- Figure 2: 3D 可视化面板 ---
         fig2 = plt.figure(figsize=(12, 5))
@@ -359,8 +367,9 @@ class TactileSensorSim:
 
         plt.tight_layout()
         if save_img:
-            plt.savefig('simulation_result_3d.png')
-            print("Result saved to simulation_result_3d.png")
+            save_path = os.path.join(self.output_dir, 'simulation_result_3d.png')
+            plt.savefig(save_path)
+            print(f"Result saved to {save_path}")
         # plt.show() # Move show to the end of script or comparison method
 
     def compare_threshold_methods(self, save_img=True):
@@ -429,8 +438,9 @@ class TactileSensorSim:
 
         plt.tight_layout()
         if save_img:
-            plt.savefig('simulation_comparison.png')
-            print("Comparison result saved to simulation_comparison.png")
+            save_path = os.path.join(self.output_dir, 'simulation_comparison.png')
+            plt.savefig(save_path)
+            print(f"Comparison result saved to {save_path}")
         plt.show()
 
 if __name__ == "__main__":
